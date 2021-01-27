@@ -45,33 +45,31 @@ export const loadConfig = (guild: Guild, backupData: BackupData): Promise<Guild[
  * Restore the guild roles
  */
 export const loadRoles = (guild: Guild, backupData: BackupData): Promise<Role[]> => {
-    const rolePromises: Promise<Role>[] = [];
-    backupData.roles.forEach((roleData) => {
-        if (roleData.isEveryone) {
-            rolePromises.push(
-                guild.roles.cache.get(guild.id).edit({
-                    name: roleData.name,
-                    color: roleData.color,
-                    permissions: roleData.permissions,
-                    mentionable: roleData.mentionable
-                })
-            );
-        } else {
-            rolePromises.push(
-                guild.roles.create({
-                    // Create the role
-                    data: {
-                        name: roleData.name,
-                        color: roleData.color,
-                        hoist: roleData.hoist,
-                        permissions: roleData.permissions,
-                        mentionable: roleData.mentionable
-                    }
-                })
-            );
-        }
-    });
-    return Promise.all(rolePromises);
+  const rolePromises: Promise<Role>[] = [];
+  backupData.roles.forEach((roleData) => {
+    if (roleData.isEveryone) {
+      rolePromises.push(
+        guild.roles.cache.get(guild.id).edit({
+          name: roleData.name,
+          color: roleData.color,
+          permissions: roleData.permissions,
+          mentionable: roleData.mentionable
+        })
+      );
+    } else {
+      rolePromises.push(
+        guild.roles.create({
+          // Create the role
+          name: roleData.name,
+          color: roleData.color,
+          hoist: roleData.hoist,
+          permissions: roleData.permissions,
+          mentionable: roleData.mentionable
+        })
+      );
+    }
+  });
+  return Promise.all(rolePromises);
 };
 
 /**
@@ -143,14 +141,14 @@ export const loadBans = (guild: Guild, backupData: BackupData): Promise<string[]
  * Restore embedChannel configuration
  */
 export const loadEmbedChannel = (guild: Guild, backupData: BackupData): Promise<Guild[]> => {
-    const embedChannelPromises: Promise<Guild>[] = [];
-    if (backupData.widget.channel) {
-        embedChannelPromises.push(
-            guild.setWidget({
-                enabled: backupData.widget.enabled,
-                channel: guild.channels.cache.find((ch) => ch.name === backupData.widget.channel)
-            })
-        );
-    }
-    return Promise.all(embedChannelPromises);
+  const embedChannelPromises: Promise<Guild>[] = [];
+  if (backupData.widget.channel) {
+    embedChannelPromises.push(
+      guild.setWidget({
+        enabled: backupData.widget.enabled,
+        channel: guild.channels.cache.find((ch) => ch.name === backupData.widget.channel)
+      })
+    );
+  }
+  return Promise.all(embedChannelPromises);
 };
